@@ -1,10 +1,28 @@
 version: "3"
 
 services:
-  flask:
-    build: src/
+  front:
+    image: subicura/guestbook-frontend:latest
     ports:
-      - 15000:5000
+      - 60000:80
+    environment:
+      PORT: 80
+      GUESTBOOK_API_ADDR: back:15000
+    depends_on:
+      - back
 
-  redis:
-    image: redis
+  back:
+    image: subicura/guestbook-backend:latest
+    environment:
+      PORT: 15000
+      GUESTBOOK_DB_ADDR: db:27017
+    depends_on:
+      - db
+
+  db:
+    image: mongo:4
+    volumes:
+      - db_data:/data/db
+
+volumes:
+  db_data: {}
